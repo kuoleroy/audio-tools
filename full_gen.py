@@ -5,6 +5,7 @@
 import json
 import sys
 import time
+import urllib.error
 import urllib.request
 
 HOST = "http://127.0.0.1:8188"

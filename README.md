@@ -4,6 +4,26 @@
 
 全部离线运行，不调云服务。
 
+## 核心前提：歌词文本是准的，ASR 只负责给时间
+
+识别人声一定会错字、漏字、把"妻"听成"起"。所以这套工具**不拿识别结果当歌词**——
+输出里的每一个字、每一行都原样来自你手写的 `lyrics.txt`，ASR 提供的只有时间戳。
+识别错了只会让某几个字挂不上时间，绝不会改掉你的词。
+
+对轴流程就两步：
+
+```bash
+# 1. 对人声分离后的干声跑一次识别（几分钟，只需跑一次）
+python make_lrc.py lrc/vocals.flac lrc/lyrics.txt lrc/out.lrc
+# 或者分开跑：asr_run.py 出 asr.json，再 align_lrc.py
+
+# 2. 之后改了歌词、错字、换行、删句，都不用再跑识别，秒级重对
+python align_lrc.py lrc/asr.json lrc/lyrics.txt lrc/out.lrc
+```
+
+跑完会打一行 `[quality]` 告诉你多少行是真对上的、多少行是插值猜的。
+插值行多就去查识别源——**必须用分离后的 vocals，混音会被伴奏带偏**。
+
 ---
 
 ## 脚本
@@ -13,13 +33,12 @@
 | `lrc_core.py` | **核心零件**：读歌词、编辑距离对齐、锚点、逐行取时、缺口插值、LRC 时间。下面两个 LRC 脚本共用 |
 | `asr_run.py` / `asr_chunked.py` | FunASR（Paraformer-large + FSMN-VAD）转写，出字级时间戳；chunked 版按段切分，长歌内存友好 |
 | `vad_segments.py` | 只用 VAD 切句，不做识别 |
-| `align_lrc.py` | **核心**：ASR 字级时间戳做编辑距离对齐到**你手上的准确歌词**，生成逐行 LRC。允许替换匹配（"起"对"妻"这类错字也能挂上时间戳），没挂上的行按前后插值。不重跑识别，改歌词后秒出 |
+| `align_lrc.py` | **主入口**：把手上的准确歌词对齐到已有 asr.json 的时间戳，生成逐行 LRC。允许替换匹配（"起"对"妻"这类错字也能挂上时间戳），没挂上的行按前后插值。不重跑识别，改完歌词秒出 |
 | `make_lrc.py` | 一步到位：自己切块跑识别 + 对齐 + 强制单调间隔。吃任意 ffmpeg 认得的格式（flac/mp3/wav） |
 | `test_core.py` | `lrc_core` 自检，无依赖秒级：`python test_core.py` |
 | `make_workflow.py` / `make_workflow_card.py` | 生成 ComfyUI 界面用的工作流 JSON / 卡片 |
 | `comfy_t2i.py` | 走 ComfyUI 的 `/prompt` API 直接出图（Qwen-Image 2.1），不手点界面 |
-| `full_gen.py` | 整条出图/出歌流水线 |
-| `test_*.py` / `batch_seed.py` | 试音色、试 ACE、小样测试（一次性实验，留着当记录） |
+| `full_gen.py` | 整条出歌流水线（ACE-Step 1.5） |
 
 模型路径可用环境变量覆盖：`set ASR_MODELS=D:\models\asr`（默认指向本机 ComfyUI 共享目录）。
 

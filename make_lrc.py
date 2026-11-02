@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """直接出 LRC：分块识别 → 全局对齐歌词 → 逐行时间（单调、不倒流）。
 
+**歌词文字一律来自你的 lyrics.txt，ASR 只提供时间戳**（识别错字不影响输出文字）。
+
 要点：
 - 长音频整跑会崩（CIF 累积误差），必须切块（≤20s）逐块识别；
 - 切块不重叠，避免同一段被认两遍导致文字互相打架；
@@ -8,14 +10,15 @@
   对上的字搬时间戳；认不出的行按前后锚点插值；
 - 最后强制单调：行与行之间时间不倒流、间隔不小于 1 秒。
 
-输入可以是任意 ffmpeg 认得的格式（wav / flac / mp3），内部统一转 16k 单声道。
+输入用**人声分离后的 vocals**，不要用混音——伴奏会把识别带偏，锚点覆盖率会掉一半。
+格式随意（wav / flac / mp3），内部统一转 16k 单声道。
 
 用法: python make_lrc.py <vocals 音频> <lyrics.txt> <out.lrc> [report.json]
 """
 import sys, os, subprocess, tempfile
 import numpy as np
 from lrc_core import (read_lyrics, align, anchors_from, row_times, pad_missing,
-                      ts2lrc, dump_report, print_table)
+                      ts2lrc, summarize, dump_report, print_table)
 
 wav_path, lyric_txt, out_lrc = sys.argv[1], sys.argv[2], sys.argv[3]
 report_json = sys.argv[4] if len(sys.argv) > 4 else None
@@ -123,6 +126,7 @@ out = [f"[{ts2lrc(rt[0])}]{ln}" for ln, rt in zip(lines, row_t) if rt]
 open(out_lrc, "w", encoding="utf-8").write("\n".join(out) + "\n")
 print(f"[out] {out_lrc} ({len(out)} 行)")
 
+summarize(row_t)
 print_table(lines, row_t)
 if report_json:
     dump_report(report_json, lines, row_t)

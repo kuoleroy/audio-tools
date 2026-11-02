@@ -7,8 +7,12 @@ from bisect import bisect_left
 
 
 def read_lyrics(path):
-    """→ (lines, ref_chars, line_spans)；ref 只留非空白字，spans 是每行在 ref 里的下标区间"""
-    lines = [ln.strip() for ln in open(path, encoding="utf-8").read().splitlines() if ln.strip()]
+    """→ (lines, ref_chars, line_spans)；ref 只留非空白字，spans 是每行在 ref 里的下标区间。
+
+    一行 = 一条字幕。`[Verse]` 这种小节标记不算歌词——不然它的字会混进 ref，
+    把整段对齐往后推，导致后面每一行都错位。"""
+    lines = [ln.strip() for ln in open(path, encoding="utf-8").read().splitlines()]
+    lines = [ln for ln in lines if ln and not (ln.startswith("[") and ln.endswith("]"))]
     ref, spans = [], []
     for ln in lines:
         s = len(ref)
@@ -103,6 +107,21 @@ def dump_report(path, lines, row_t, **extra):
                **extra},
               open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\n[report]", path)
+
+
+def summarize(row_t, warn_below=0.6):
+    """按行统计对齐质量。插值行多说明这份 ASR 不配这首歌，时间基本是猜的。
+    注意 0/0 的行（整行没有锚点）不算「对上」——rt[3] 是 0 时 0==0 会误判。"""
+    n = sum(1 for rt in row_t if rt)
+    exact = sum(1 for rt in row_t if rt and rt[3] and rt[2] == rt[3])
+    guess = sum(1 for rt in row_t if rt and not rt[2])
+    part = n - exact - guess
+    print(f"[quality] 整行对上 {exact} / 部分对上 {part} / 全靠插值 {guess}"
+          f"（共 {n} 行，{exact / max(1, n) * 100:.0f}% 可靠）")
+    if n and exact / n < warn_below:
+        print(f"[warn] 可靠行不足 {warn_below:.0%}——多半是 ASR 跑错源了。"
+              "对轴请用**人声分离后**的 vocals 再跑识别，混音直接识别会被伴奏带偏。")
+    return exact, part, guess
 
 
 def print_table(lines, row_t):

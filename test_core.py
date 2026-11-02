@@ -3,7 +3,8 @@
 
 只钉住真正会错的地方：编辑距离对不对得上、错字能不能挂上时间、连续缺锚点会不会塌。
 """
-from lrc_core import align, anchors_from, row_times, pad_missing, ts2lrc
+from lrc_core import (align, anchors_from, row_times, pad_missing, ts2lrc,
+                      summarize, read_lyrics)
 
 
 def test_align_basic():
@@ -48,6 +49,22 @@ def test_ts2lrc():
     assert ts2lrc(0) == "00:00.00"
     assert ts2lrc(61123) == "01:01.12"
     assert ts2lrc(-5) == "00:00.00"
+
+
+def test_summarize_counts_zero_total_as_guess():
+    # 0/0 行是整行没锚点，不能因为 0==0 被算成「整行对上」
+    row_t = [[0, 100, 3, 3], [0, 100, 1, 3], [0, 100, 0, 0]]
+    assert summarize(row_t) == (1, 1, 1)
+
+
+def test_read_lyrics_skips_section_markers():
+    import tempfile, os
+    p = os.path.join(tempfile.mkdtemp(), "l.txt")
+    open(p, "w", encoding="utf-8").write("[Verse]\n第一句\n\n[Chorus]\n第二句\n")
+    lines, ref, spans = read_lyrics(p)
+    assert lines == ["第一句", "第二句"], lines      # 小节标记不能混进 ref
+    assert "".join(ref) == "第一句第二句", ref
+    assert spans == [(0, 3), (3, 6)], spans
 
 
 if __name__ == "__main__":

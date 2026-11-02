@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 """把 Paraformer 的字级时间戳对齐到已知歌词，生成逐行 LRC。
 
-原理：ASR 认出的字（hyp）和我们手上的歌词（ref）做编辑距离对齐
+**歌词文字一律来自你的 lyrics.txt，ASR 只提供时间戳。** 识别出来错字、漏字都不影响
+输出文字——它只影响哪些字能挂上时间，挂不上的行按前后行插值。
+
+原理：ASR 认出的字（hyp）和你手上的歌词（ref）做编辑距离对齐
 （允许替换匹配——"起"对"妻"这种近似字也要能挂上时间戳），
 对齐后的对子直接搬时间戳；没挂上的行按前后行插值。
 
-唱歌识别会错字，但只要大部分字能对齐上，逐行时间就够准。
-不需要重跑 ASR——已经有 asr*.json 时用这个，make_lrc.py 才自己跑识别。
+改完歌词想重对一次，不用重跑识别，直接再跑本脚本即可（秒级）。
 
 用法: python align_lrc.py <asr.json> <lyrics.txt> <out.lrc> [report.json]
 """
 import sys, json
 from lrc_core import (read_lyrics, align, anchors_from, row_times, pad_missing,
-                      ts2lrc, dump_report, print_table)
+                      ts2lrc, summarize, dump_report, print_table)
 
 asr_json, lyric_txt, out_lrc = sys.argv[1], sys.argv[2], sys.argv[3]
 report_json = sys.argv[4] if len(sys.argv) > 4 else None
@@ -51,6 +53,7 @@ out = [f"[{ts2lrc(rt[0])}]{ln}" for ln, rt in zip(lines, row_t) if rt]
 open(out_lrc, "w", encoding="utf-8").write("\n".join(out) + "\n")
 print(f"[out] {out_lrc}  ({len(out)} 行)")
 
+summarize(row_t)
 print_table(lines, row_t)
 if report_json:
     dump_report(report_json, lines, row_t, coverage=len(anchors) / max(1, len(ref)))
