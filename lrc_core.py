@@ -110,7 +110,7 @@ def dump_report(path, lines, row_t, **extra):
 
 
 def summarize(row_t, warn_below=0.6):
-    """按行统计对齐质量。插值行多说明这份 ASR 不配这首歌，时间基本是猜的。
+    """按行统计对齐质量。插值行多说明这份识别不配这首歌，那几行的时间是猜的。
     注意 0/0 的行（整行没有锚点）不算「对上」——rt[3] 是 0 时 0==0 会误判。"""
     n = sum(1 for rt in row_t if rt)
     exact = sum(1 for rt in row_t if rt and rt[3] and rt[2] == rt[3])
@@ -119,8 +119,10 @@ def summarize(row_t, warn_below=0.6):
     print(f"[quality] 整行对上 {exact} / 部分对上 {part} / 全靠插值 {guess}"
           f"（共 {n} 行，{exact / max(1, n) * 100:.0f}% 可靠）")
     if n and exact / n < warn_below:
-        print(f"[warn] 可靠行不足 {warn_below:.0%}——多半是 ASR 跑错源了。"
-              "对轴请用**人声分离后**的 vocals 再跑识别，混音直接识别会被伴奏带偏。")
+        print(f"[warn] 可靠行不足 {warn_below:.0%}。按这两步查：\n"
+              "  1) 输入必须是**分离后的 vocals**，混音直接识别会被伴奏带偏；\n"
+              "  2) 已经是 vocals 还低，就是模型对唱腔不适应（唱歌比说话难识别），\n"
+              "     换更强的声学模型（SenseVoice / Whisper）重跑识别，或手工校正插值行。")
     return exact, part, guess
 
 
