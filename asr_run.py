@@ -4,7 +4,8 @@
 """
 import sys, os, json, time
 
-MODELS = r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr"
+MODELS = os.environ.get(
+    "ASR_MODELS", r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr")
 ASR_DIR = os.path.join(MODELS, "paraformer-large_asr_nat-zh-cn-16k-common-vocab8404")
 VAD_DIR = os.path.join(MODELS, "fsmn-vad_zh-cn-16k-common")
 

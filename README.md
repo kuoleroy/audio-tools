@@ -10,14 +10,18 @@
 
 | 文件 | 作用 |
 |---|---|
+| `lrc_core.py` | **核心零件**：读歌词、编辑距离对齐、锚点、逐行取时、缺口插值、LRC 时间。下面两个 LRC 脚本共用 |
 | `asr_run.py` / `asr_chunked.py` | FunASR（Paraformer-large + FSMN-VAD）转写，出字级时间戳；chunked 版按段切分，长歌内存友好 |
 | `vad_segments.py` | 只用 VAD 切句，不做识别 |
-| `align_lrc.py` | **核心**：ASR 字级时间戳做编辑距离对齐到**你手上的准确歌词**，生成逐行 LRC。允许替换匹配（"起"对"妻"这类错字也能挂上时间戳），没挂上的行按前后插值 |
-| `make_lrc.py` | 生成 LRC |
-| `make_workflow.py` / `make_workflow_card.py` | 生成 ComfyUI 工作流 JSON / 卡片 |
+| `align_lrc.py` | **核心**：ASR 字级时间戳做编辑距离对齐到**你手上的准确歌词**，生成逐行 LRC。允许替换匹配（"起"对"妻"这类错字也能挂上时间戳），没挂上的行按前后插值。不重跑识别，改歌词后秒出 |
+| `make_lrc.py` | 一步到位：自己切块跑识别 + 对齐 + 强制单调间隔。吃任意 ffmpeg 认得的格式（flac/mp3/wav） |
+| `test_core.py` | `lrc_core` 自检，无依赖秒级：`python test_core.py` |
+| `make_workflow.py` / `make_workflow_card.py` | 生成 ComfyUI 界面用的工作流 JSON / 卡片 |
 | `comfy_t2i.py` | 走 ComfyUI 的 `/prompt` API 直接出图（Qwen-Image 2.1），不手点界面 |
-| `full_gen.py` | 整条出图流水线 |
-| `test_*.py` | 试音色、试 ACE、小样测试 |
+| `full_gen.py` | 整条出图/出歌流水线 |
+| `test_*.py` / `batch_seed.py` | 试音色、试 ACE、小样测试（一次性实验，留着当记录） |
+
+模型路径可用环境变量覆盖：`set ASR_MODELS=D:\models\asr`（默认指向本机 ComfyUI 共享目录）。
 
 ## `lrc/` — 歌词工程
 

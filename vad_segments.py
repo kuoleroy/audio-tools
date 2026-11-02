@@ -4,7 +4,8 @@
 """
 import sys, os, json
 
-MODELS = r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr"
+MODELS = os.environ.get(
+    "ASR_MODELS", r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr")
 VAD_DIR = os.path.join(MODELS, "fsmn-vad_zh-cn-16k-common")
 
 wav, out = sys.argv[1], sys.argv[2]
