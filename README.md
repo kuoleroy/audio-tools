@@ -107,3 +107,13 @@ audio-separator song.flac \
 | `venv/`、`__pycache__/` | 环境 |
 
 **入库的只有：脚本 + 样式文件 + 校对过的歌词 + 对齐报告。**
+
+---
+
+## 许可证
+
+代码以 **MIT** 协议开源，见 [`LICENSE`](LICENSE)。
+
+例外：`lrc/` 下的歌词文本（`lyrics*.txt`、各 `.ass` 样式里的句子）是原创词作《相交线》，随仓库公开仅为演示排版效果。翻唱、改编、商用请先联系作者。
+
+第三方依赖各自遵循其协议：`funasr`（MIT）、`audio-separator`（MIT）、`torch`（BSD-3-Clause）、`PySide6` 等见各自仓库。
