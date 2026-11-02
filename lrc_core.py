@@ -55,7 +55,10 @@ def anchors_from(ref, hyp, times, pairs):
 
 def row_times(spans, anchors, exact_only=False):
     """每行取 [起, 止, 命中字数, 总字数]；一个字都没锚上的行给 None。
-    exact_only=True 时命中只数完全同字的（make_lrc 的「全同」口径）。"""
+
+    两种口径：默认「有锚点就算命中」——用来判断这行时间可不可信；
+    exact_only=True 只数完全同字的——用来判断识别本身准不准。
+    外面对用户报的可靠度一律用默认口径，别看错成识别准确率。"""
     out = []
     for s, e in spans:
         hit = [anchors[p] for p in range(s, e) if p in anchors]
@@ -107,6 +110,93 @@ def dump_report(path, lines, row_t, **extra):
                **extra},
               open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\n[report]", path)
+
+
+def transcribe(audio_path, models_dir, chunk=20.0):
+    """分块跑 Paraformer，返回 (chars, times, total_seconds)。
+
+    长音频整跑会崩（CIF 累积误差），所以切块；切点挑能量最低处，别从字中间切。
+    funasr/numpy 在这里才 import，好让 test_core.py 不装它们也能跑。
+    """
+    import os, subprocess, tempfile
+    import numpy as np
+    from funasr import AutoModel
+
+    asr_dir = os.path.join(models_dir, "paraformer-large_asr_nat-zh-cn-16k-common-vocab8404")
+    vad_dir = os.path.join(models_dir, "fsmn-vad_zh-cn-16k-common")
+
+    # ffmpeg 解码成 16k 单声道，比 wave 模块短，还能吃 flac/mp3（分离出来的就是 flac）
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", audio_path,
+                          "-ac", "1", "-ar", "16000", "-f", "s16le", "-"],
+                         capture_output=True, check=True).stdout
+    audio = np.frombuffer(raw, np.int16).astype(np.float32) / 32768.0
+    sr = 16000
+    total = len(audio) / sr
+    hop = int(sr * 0.02)
+    nfr = len(audio) // hop
+    rms = np.sqrt((audio[: nfr * hop].reshape(nfr, hop) ** 2).mean(axis=1) + 1e-12)
+
+    def quietest_at(t, win=2.0):
+        lo = max(0, int((t - win) / 0.02))
+        hi = min(nfr, int((t + win) / 0.02))
+        if hi <= lo:
+            return t
+        return (lo + int(np.argmin(rms[lo:hi]))) * 0.02
+
+    bounds = [0.0]
+    while bounds[-1] + chunk < total - 1.0:
+        nxt = quietest_at(min(bounds[-1] + chunk, total - 2.0))
+        bounds.append(nxt if nxt > bounds[-1] + 8 else bounds[-1] + chunk)
+    bounds.append(total)
+    print(f"[plan] {len(bounds) - 1} 块（不重叠）")
+
+    model = AutoModel(model=asr_dir, vad_model=vad_dir, device="cuda",
+                      disable_update=True, disable_pbar=True)
+    tmpdir = tempfile.mkdtemp(prefix="asr_")
+    hyp, times = [], []
+    for k in range(len(bounds) - 1):
+        a, b = bounds[k], bounds[k + 1]
+        if b - a < 1.0:
+            continue
+        seg = os.path.join(tmpdir, f"c{k}.wav")
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", f"{a:.3f}", "-to", f"{b:.3f}",
+                        "-i", audio_path, "-ac", "1", "-ar", "16000", "-c:a", "pcm_s16le", seg],
+                       check=True)
+        res = model.generate(input=seg, batch_size_s=300, output_timestamp=True)
+        cs = []
+        for r in res:
+            txt, ts = r.get("text", "") or "", r.get("timestamp") or []
+            j = 0
+            for ch in txt:
+                if ch.isspace():
+                    continue
+                if j < len(ts):
+                    cs.append((ch, (ts[j][0] + a * 1000, ts[j][1] + a * 1000)))
+                j += 1
+        for ch, t in cs:
+            hyp.append(ch)
+            times.append(t)
+        print(f"[chunk {k}] {a:6.1f}-{b:6.1f}s {len(cs):3d}字  "
+              f"{''.join(c[0] for c in cs)[:40]}", flush=True)
+
+    print(f"[hyp] {len(hyp)} 字 / {total:.1f}s")
+    return hyp, times, total
+
+
+def save_asr(path, chars, times, key=""):
+    import json
+    json.dump({"key": key, "text": " ".join(chars),
+               "timestamp": [[int(s), int(e)] for s, e in times]},
+              open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    return path
+
+
+def load_asr(path):
+    """→ (chars, times)，给 align 用"""
+    import json
+    d = json.load(open(path, encoding="utf-8"))
+    chars = [c for c in d["text"] if not c.isspace()]
+    return chars, [tuple(t) for t in d["timestamp"]]
 
 
 def summarize(row_t, warn_below=0.6):

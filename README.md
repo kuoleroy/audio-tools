@@ -10,19 +10,52 @@
 输出里的每一个字、每一行都原样来自你手写的 `lyrics.txt`，ASR 提供的只有时间戳。
 识别错了只会让某几个字挂不上时间，绝不会改掉你的词。
 
-对轴流程就两步：
+## 怎么用（问答式）
 
 ```bash
-# 1. 对人声分离后的干声跑一次识别（几分钟，只需跑一次）
-python make_lrc.py lrc/vocals.flac lrc/lyrics.txt lrc/out.lrc
-# 或者分开跑：asr_run.py 出 asr.json，再 align_lrc.py
-
-# 2. 之后改了歌词、错字、换行、删句，都不用再跑识别，秒级重对
-python align_lrc.py lrc/asr.json lrc/lyrics.txt lrc/out.lrc
+python dui.py
 ```
 
-跑完会打一行 `[quality]` 告诉你多少行是真对上的、多少行是插值猜的。
-插值行多就去查识别源——**必须用分离后的 vocals，混音会被伴奏带偏**。
+跑起来就两句问话，把文件拖进窗口即可：
+
+```
+① 把歌曲拖进来（wav / flac / mp3）：D:\歌\相交线.wav
+   → 分块识别，把每个字的时间存成 相交线.asr.json   （约 45 秒 / 3.5 分钟的歌）
+② 把歌词 txt 拖进来：D:\歌\lyrics.txt
+   → 出 相交线.lrc
+```
+
+**识别只能跑一次。** 再跑同一首歌会自动复用 `相交线.asr.json`，只做对齐——改错字、
+拆句、删句、重排，都是秒级重出 LRC。想重新识别，把那个 `.asr.json` 删掉再跑。
+
+产物落在音频旁边：`相交线.asr.json`（时间戳底料）、`相交线.lrc`（成品）。
+
+### 命令行等价写法
+
+```bash
+# 识别 + 对轴一次做完，并把识别结果存下来
+python make_lrc.py 歌.flac lyrics.txt out.lrc report.json out.asr.json
+
+# 之后改歌词只跑这个
+python align_lrc.py out.asr.json lyrics.txt out.lrc
+```
+
+跑完会打一行 `[quality]` 告诉你多少行是真对上的、多少行是插值猜的：
+
+```
+[quality] 整行对上 26 / 部分对上 3 / 全靠插值 3（共 32 行，81% 可靠）
+```
+
+`[quality]` 统计的是「这行时间可不可信」，不是「识别准不准」。**全是插值的那几行
+在下面的表里标 `插`，时间基本是猜的，需要你手工改。**
+
+唱腔比说话难识别，Paraformer 会整句漏掉。可靠度低时按这个顺序查：① 输入必须是
+**人声分离后的 vocals**，混音会被伴奏带偏；② 已经是 vocals 还低，就换更强的声学
+模型（SenseVoice / Whisper）重跑识别，或手工校正那几行。
+
+注意 LRC 的时间是相对**你喂进去的那个音频文件**的。识别用的文件必须和最终播放/合成
+用的是同一条，否则整条时间轴会一起偏移（比如干声开头有 40 秒前奏，第一句就会落在
+`[00:40.03]`）。
 
 ---
 
@@ -30,11 +63,12 @@ python align_lrc.py lrc/asr.json lrc/lyrics.txt lrc/out.lrc
 
 | 文件 | 作用 |
 |---|---|
-| `lrc_core.py` | **核心零件**：读歌词、编辑距离对齐、锚点、逐行取时、缺口插值、LRC 时间。下面两个 LRC 脚本共用 |
-| `asr_run.py` / `asr_chunked.py` | FunASR（Paraformer-large + FSMN-VAD）转写，出字级时间戳；chunked 版按段切分，长歌内存友好 |
+| `dui.py` | **问答式主入口**。给音频→识别存时间戳；给歌词→出 LRC。同一首歌第二次跑自动跳过识别 |
+| `lrc_core.py` | **核心零件**：分块识别、读歌词、编辑距离对齐、锚点、逐行取时、缺口插值、LRC 时间。下面几个脚本共用 |
+| `make_lrc.py` | 命令行版：识别 + 对齐 + 强制单调间隔一次做完 |
+| `align_lrc.py` | 只做对齐：拿已有 asr.json 和你的歌词出 LRC。改完歌词秒出 |
+| `asr_run.py` / `asr_chunked.py` | 只跑识别，出字级时间戳 JSON；chunked 版带重叠合并，适合长音频 |
 | `vad_segments.py` | 只用 VAD 切句，不做识别 |
-| `align_lrc.py` | **主入口**：把手上的准确歌词对齐到已有 asr.json 的时间戳，生成逐行 LRC。允许替换匹配（"起"对"妻"这类错字也能挂上时间戳），没挂上的行按前后插值。不重跑识别，改完歌词秒出 |
-| `make_lrc.py` | 一步到位：自己切块跑识别 + 对齐 + 强制单调间隔。吃任意 ffmpeg 认得的格式（flac/mp3/wav） |
 | `test_core.py` | `lrc_core` 自检，无依赖秒级：`python test_core.py` |
 | `make_workflow.py` / `make_workflow_card.py` | 生成 ComfyUI 界面用的工作流 JSON / 卡片 |
 | `comfy_t2i.py` | 走 ComfyUI 的 `/prompt` API 直接出图（Qwen-Image 2.1），不手点界面 |
