@@ -1,0 +1,449 @@
+[
+ {
+  "key": "xiangjielian_16k",
+  "text": "嗯 嗯 嗯 哦冲散 你说数学不好 算不出离别的 距离 这起鸿构造画好了轨迹把我们推向不 不同的象限 我们是 悄悄 先 相交一次就在 回不来 越走越 的人 越走越 的人 这不是命运 世纪和 我的 安排  你站在三号传送带 我在嘶后你 月台 中间隔着三十七米 喝一辈子 跨不过的胸 我们是两 两条 就下 爱上这一次就再也 回不来 越走越远 越走越 的呀 这不是命运 失去和 我的安排 嗯 不是不想重逢时双手沾满了酸酸的灰 连拥抱都要计算成本连思念都要计算 损耗 我们是 想小 天 想找一次就再 不了 越走越 的远 越走越 的人 这不是命 失去和 放开 秋冬还在转 流水线 还在走 我数着我们的距离 一秒一秒边缘 我 哦 轰哦哦哦",
+  "sentence_info": [
+   {
+    "start": 130,
+    "end": 3250,
+    "text": "嗯",
+    "sentence": "嗯",
+    "timestamp": []
+   },
+   {
+    "start": 5060,
+    "end": 6380,
+    "text": "嗯",
+    "sentence": "嗯",
+    "timestamp": []
+   },
+   {
+    "start": 9800,
+    "end": 13550,
+    "text": "嗯",
+    "sentence": "嗯",
+    "timestamp": []
+   },
+   {
+    "start": 15720,
+    "end": 56170,
+    "text": "哦冲散",
+    "sentence": "哦冲散",
+    "timestamp": []
+   },
+   {
+    "start": 58670,
+    "end": 60870,
+    "text": "你说数学不好",
+    "sentence": "你说数学不好",
+    "timestamp": []
+   },
+   {
+    "start": 61740,
+    "end": 63670,
+    "text": "算不出离别的",
+    "sentence": "算不出离别的",
+    "timestamp": []
+   },
+   {
+    "start": 63670,
+    "end": 64970,
+    "text": "距离",
+    "sentence": "距离",
+    "timestamp": []
+   },
+   {
+    "start": 65260,
+    "end": 70350,
+    "text": "这起鸿构造画好了轨迹把我们推向不",
+    "sentence": "这起鸿构造画好了轨迹把我们推向不",
+    "timestamp": []
+   },
+   {
+    "start": 70350,
+    "end": 72950,
+    "text": "不同的象限",
+    "sentence": "不同的象限",
+    "timestamp": []
+   },
+   {
+    "start": 74710,
+    "end": 75990,
+    "text": "我们是",
+    "sentence": "我们是",
+    "timestamp": []
+   },
+   {
+    "start": 76840,
+    "end": 77400,
+    "text": "悄悄",
+    "sentence": "悄悄",
+    "timestamp": []
+   },
+   {
+    "start": 77400,
+    "end": 77770,
+    "text": "先",
+    "sentence": "先",
+    "timestamp": []
+   },
+   {
+    "start": 77770,
+    "end": 79700,
+    "text": "相交一次就在",
+    "sentence": "相交一次就在",
+    "timestamp": []
+   },
+   {
+    "start": 80180,
+    "end": 81190,
+    "text": "回不来",
+    "sentence": "回不来",
+    "timestamp": []
+   },
+   {
+    "start": 81970,
+    "end": 83000,
+    "text": "越走越",
+    "sentence": "越走越",
+    "timestamp": []
+   },
+   {
+    "start": 83010,
+    "end": 83600,
+    "text": "的人",
+    "sentence": "的人",
+    "timestamp": []
+   },
+   {
+    "start": 83660,
+    "end": 84640,
+    "text": "越走越",
+    "sentence": "越走越",
+    "timestamp": []
+   },
+   {
+    "start": 84640,
+    "end": 85260,
+    "text": "的人",
+    "sentence": "的人",
+    "timestamp": []
+   },
+   {
+    "start": 85260,
+    "end": 86680,
+    "text": "这不是命运",
+    "sentence": "这不是命运",
+    "timestamp": []
+   },
+   {
+    "start": 87120,
+    "end": 88420,
+    "text": "世纪和",
+    "sentence": "世纪和",
+    "timestamp": []
+   },
+   {
+    "start": 88420,
+    "end": 88710,
+    "text": "我的",
+    "sentence": "我的",
+    "timestamp": []
+   },
+   {
+    "start": 88710,
+    "end": 89510,
+    "text": "安排",
+    "sentence": "安排",
+    "timestamp": []
+   },
+   {
+    "start": 95120,
+    "end": 98140,
+    "text": "你站在三号传送带",
+    "sentence": "你站在三号传送带",
+    "timestamp": []
+   },
+   {
+    "start": 98640,
+    "end": 100270,
+    "text": "我在嘶后你",
+    "sentence": "我在嘶后你",
+    "timestamp": []
+   },
+   {
+    "start": 100270,
+    "end": 101070,
+    "text": "月台",
+    "sentence": "月台",
+    "timestamp": []
+   },
+   {
+    "start": 101930,
+    "end": 105240,
+    "text": "中间隔着三十七米",
+    "sentence": "中间隔着三十七米",
+    "timestamp": []
+   },
+   {
+    "start": 105240,
+    "end": 106750,
+    "text": "喝一辈子",
+    "sentence": "喝一辈子",
+    "timestamp": []
+   },
+   {
+    "start": 106750,
+    "end": 109700,
+    "text": "跨不过的胸",
+    "sentence": "跨不过的胸",
+    "timestamp": []
+   },
+   {
+    "start": 111390,
+    "end": 112860,
+    "text": "我们是两",
+    "sentence": "我们是两",
+    "timestamp": []
+   },
+   {
+    "start": 112860,
+    "end": 113380,
+    "text": "两条",
+    "sentence": "两条",
+    "timestamp": []
+   },
+   {
+    "start": 113790,
+    "end": 114470,
+    "text": "就下",
+    "sentence": "就下",
+    "timestamp": []
+   },
+   {
+    "start": 114470,
+    "end": 116540,
+    "text": "爱上这一次就再也",
+    "sentence": "爱上这一次就再也",
+    "timestamp": []
+   },
+   {
+    "start": 116790,
+    "end": 117790,
+    "text": "回不来",
+    "sentence": "回不来",
+    "timestamp": []
+   },
+   {
+    "start": 118630,
+    "end": 120020,
+    "text": "越走越远",
+    "sentence": "越走越远",
+    "timestamp": []
+   },
+   {
+    "start": 120470,
+    "end": 121260,
+    "text": "越走越",
+    "sentence": "越走越",
+    "timestamp": []
+   },
+   {
+    "start": 121260,
+    "end": 121890,
+    "text": "的呀",
+    "sentence": "的呀",
+    "timestamp": []
+   },
+   {
+    "start": 121890,
+    "end": 123590,
+    "text": "这不是命运",
+    "sentence": "这不是命运",
+    "timestamp": []
+   },
+   {
+    "start": 123800,
+    "end": 125020,
+    "text": "失去和",
+    "sentence": "失去和",
+    "timestamp": []
+   },
+   {
+    "start": 125090,
+    "end": 126270,
+    "text": "我的安排",
+    "sentence": "我的安排",
+    "timestamp": []
+   },
+   {
+    "start": 132460,
+    "end": 133110,
+    "text": "嗯",
+    "sentence": "嗯",
+    "timestamp": []
+   },
+   {
+    "start": 133110,
+    "end": 138660,
+    "text": "不是不想重逢时双手沾满了酸酸的灰",
+    "sentence": "不是不想重逢时双手沾满了酸酸的灰",
+    "timestamp": []
+   },
+   {
+    "start": 138840,
+    "end": 144740,
+    "text": "连拥抱都要计算成本连思念都要计算",
+    "sentence": "连拥抱都要计算成本连思念都要计算",
+    "timestamp": []
+   },
+   {
+    "start": 144810,
+    "end": 146290,
+    "text": "损耗",
+    "sentence": "损耗",
+    "timestamp": []
+   },
+   {
+    "start": 148010,
+    "end": 149350,
+    "text": "我们是",
+    "sentence": "我们是",
+    "timestamp": []
+   },
+   {
+    "start": 150120,
+    "end": 150750,
+    "text": "想小",
+    "sentence": "想小",
+    "timestamp": []
+   },
+   {
+    "start": 150750,
+    "end": 151100,
+    "text": "天",
+    "sentence": "天",
+    "timestamp": []
+   },
+   {
+    "start": 151100,
+    "end": 153130,
+    "text": "想找一次就再",
+    "sentence": "想找一次就再",
+    "timestamp": []
+   },
+   {
+    "start": 153860,
+    "end": 154420,
+    "text": "不了",
+    "sentence": "不了",
+    "timestamp": []
+   },
+   {
+    "start": 155290,
+    "end": 156240,
+    "text": "越走越",
+    "sentence": "越走越",
+    "timestamp": []
+   },
+   {
+    "start": 156240,
+    "end": 156940,
+    "text": "的远",
+    "sentence": "的远",
+    "timestamp": []
+   },
+   {
+    "start": 156960,
+    "end": 157890,
+    "text": "越走越",
+    "sentence": "越走越",
+    "timestamp": []
+   },
+   {
+    "start": 157890,
+    "end": 158600,
+    "text": "的人",
+    "sentence": "的人",
+    "timestamp": []
+   },
+   {
+    "start": 158600,
+    "end": 159760,
+    "text": "这不是命",
+    "sentence": "这不是命",
+    "timestamp": []
+   },
+   {
+    "start": 160440,
+    "end": 161720,
+    "text": "失去和",
+    "sentence": "失去和",
+    "timestamp": []
+   },
+   {
+    "start": 162180,
+    "end": 162840,
+    "text": "放开",
+    "sentence": "放开",
+    "timestamp": []
+   },
+   {
+    "start": 169000,
+    "end": 171660,
+    "text": "秋冬还在转",
+    "sentence": "秋冬还在转",
+    "timestamp": []
+   },
+   {
+    "start": 171920,
+    "end": 173440,
+    "text": "流水线",
+    "sentence": "流水线",
+    "timestamp": []
+   },
+   {
+    "start": 173440,
+    "end": 175080,
+    "text": "还在走",
+    "sentence": "还在走",
+    "timestamp": []
+   },
+   {
+    "start": 175560,
+    "end": 179120,
+    "text": "我数着我们的距离",
+    "sentence": "我数着我们的距离",
+    "timestamp": []
+   },
+   {
+    "start": 180260,
+    "end": 183370,
+    "text": "一秒一秒边缘",
+    "sentence": "一秒一秒边缘",
+    "timestamp": []
+   },
+   {
+    "start": 191550,
+    "end": 192420,
+    "text": "我",
+    "sentence": "我",
+    "timestamp": []
+   },
+   {
+    "start": 194500,
+    "end": 195740,
+    "text": "哦",
+    "sentence": "哦",
+    "timestamp": []
+   },
+   {
+    "start": 201480,
+    "end": 207680,
+    "text": "轰哦哦哦",
+    "sentence": "轰哦哦哦",
+    "timestamp": []
+   }
+  ]
+ }
+]

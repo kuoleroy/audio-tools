@@ -1,0 +1,220 @@
+{
+ "lines": [
+  {
+   "i": 0,
+   "text": "妻死我鼓盆 不哭不戚",
+   "start_ms": 21810,
+   "end_ms": 25470,
+   "exact": 5,
+   "total": 9
+  },
+  {
+   "i": 1,
+   "text": "早看淡 死生俱是轻",
+   "start_ms": 26850,
+   "end_ms": 30690,
+   "exact": 5,
+   "total": 8
+  },
+  {
+   "i": 2,
+   "text": "你们嫌这太冷清",
+   "start_ms": 31950,
+   "end_ms": 35729,
+   "exact": 4,
+   "total": 7
+  },
+  {
+   "i": 3,
+   "text": "偏替我 劈棺添个脑髓名",
+   "start_ms": 36990,
+   "end_ms": 37950,
+   "exact": 3,
+   "total": 10
+  },
+  {
+   "i": 4,
+   "text": "编造那 楚王孙田氏影",
+   "start_ms": 37990,
+   "end_ms": 38790,
+   "exact": 0,
+   "total": 0
+  },
+  {
+   "i": 5,
+   "text": "把大道 改作戏文听",
+   "start_ms": 38990,
+   "end_ms": 39790,
+   "exact": 0,
+   "total": 0
+  },
+  {
+   "i": 6,
+   "text": "取脑髓 救风情的病症",
+   "start_ms": 39990,
+   "end_ms": 40790,
+   "exact": 0,
+   "total": 9
+  },
+  {
+   "i": 7,
+   "text": "桩桩件 皆非我本心",
+   "start_ms": 40990,
+   "end_ms": 53905,
+   "exact": 1,
+   "total": 8
+  },
+  {
+   "i": 8,
+   "text": "借吾道行 写你的风情",
+   "start_ms": 64250,
+   "end_ms": 67910,
+   "exact": 4,
+   "total": 9
+  },
+  {
+   "i": 9,
+   "text": "借我姓名 演你的痴情",
+   "start_ms": 67910,
+   "end_ms": 72950,
+   "exact": 8,
+   "total": 9
+  },
+  {
+   "i": 10,
+   "text": "我本无一物 可执可凭",
+   "start_ms": 72950,
+   "end_ms": 78049,
+   "exact": 6,
+   "total": 9
+  },
+  {
+   "i": 11,
+   "text": "偏落进 你们的话本里 成文",
+   "start_ms": 78049,
+   "end_ms": 84735,
+   "exact": 6,
+   "total": 11
+  },
+  {
+   "i": 12,
+   "text": "后世闲人 笔力千斤",
+   "start_ms": 87890,
+   "end_ms": 90650,
+   "exact": 3,
+   "total": 8
+  },
+  {
+   "i": 13,
+   "text": "写尽风月 写不尽真",
+   "start_ms": 90650,
+   "end_ms": 95690,
+   "exact": 8,
+   "total": 8
+  },
+  {
+   "i": 14,
+   "text": "将我拆作 才子佳人",
+   "start_ms": 95690,
+   "end_ms": 101435,
+   "exact": 8,
+   "total": 8
+  },
+  {
+   "i": 15,
+   "text": "随你们取用 随你们拼",
+   "start_ms": 102690,
+   "end_ms": 106680,
+   "exact": 7,
+   "total": 9
+  },
+  {
+   "i": 16,
+   "text": "我不恼 也不应",
+   "start_ms": 108680,
+   "end_ms": 110480,
+   "exact": 4,
+   "total": 6
+  },
+  {
+   "i": 17,
+   "text": "鼓盆声 早随烟尘冷",
+   "start_ms": 110480,
+   "end_ms": 111559,
+   "exact": 0,
+   "total": 8
+  },
+  {
+   "i": 18,
+   "text": "你们写的热闹艳景",
+   "start_ms": 113720,
+   "end_ms": 121700,
+   "exact": 4,
+   "total": 8
+  },
+  {
+   "i": 19,
+   "text": "与我 原是两样命",
+   "start_ms": 123829,
+   "end_ms": 126770,
+   "exact": 5,
+   "total": 7
+  },
+  {
+   "i": 20,
+   "text": "借吾道行 写你的风情",
+   "start_ms": 130490,
+   "end_ms": 134329,
+   "exact": 5,
+   "total": 9
+  },
+  {
+   "i": 21,
+   "text": "借我姓名 演你的痴情",
+   "start_ms": 135530,
+   "end_ms": 139369,
+   "exact": 7,
+   "total": 9
+  },
+  {
+   "i": 22,
+   "text": "我本无一物 可执可凭",
+   "start_ms": 140570,
+   "end_ms": 144410,
+   "exact": 6,
+   "total": 9
+  },
+  {
+   "i": 23,
+   "text": "偏落进 你们的话本里 成文",
+   "start_ms": 145590,
+   "end_ms": 149430,
+   "exact": 7,
+   "total": 11
+  },
+  {
+   "i": 24,
+   "text": "鼓盆远 风情散",
+   "start_ms": 174610,
+   "end_ms": 178390,
+   "exact": 2,
+   "total": 6
+  },
+  {
+   "i": 25,
+   "text": "道还是道 名还是名",
+   "start_ms": 178390,
+   "end_ms": 182350,
+   "exact": 4,
+   "total": 8
+  },
+  {
+   "i": 26,
+   "text": "你们写罢 我自 归零",
+   "start_ms": 184650,
+   "end_ms": 189930,
+   "exact": 6,
+   "total": 8
+  }
+ ]
+}
