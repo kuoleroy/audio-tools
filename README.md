@@ -56,17 +56,41 @@ lrc/
 
 ## 依赖
 
-脚本依赖：`funasr`、`torch`、`demucs`、`safetensors`、`ffmpeg`（命令行）。
+脚本依赖：`funasr`、`torch`、`audio-separator`、`safetensors`、`ffmpeg`（命令行）。
 
-**不要用 `pip install --target` 把包装进本目录**——那样包会散成一堆目录，且必须改 `PYTHONPATH` 才能 import，属于不可维护状态。建 venv：
+**不要用 `pip install --target` 把包装进本目录**——那样包会散成一堆目录，且必须改 `PYTHONPATH` 才能 import，属于不可维护状态。必须建 venv。
+
+已就绪的环境（本机）：
+
+```
+C:\Users\admin\.venvs\audio-sep\Scripts\python.exe     # Python 3.13 + torch 2.14.1+cu126 (CUDA True)
+```
+
+已装：`funasr`（Paraformer + FSMN-VAD）、`audio-separator 0.48.0`（UVR，含 htdemucs / MDX / VR 系模型）、`soundfile`、`numpy`。
+
+重装的话：
 
 ```bash
 python -m venv venv
 venv/Scripts/python.exe -m pip install -U pip
-venv/Scripts/python.exe -m pip install funasr demucs==4.1.0
-# torch 按显卡选 cu126
+venv/Scripts/python.exe -m pip install funasr audio-separator soundfile
+# torch 按显卡选 cu126，注意 torch 与 torchaudio 版本要配套
 venv/Scripts/python.exe -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 ```
+
+### 人声分离
+
+不用 `demucs` 这个包（它跟新版 torch 的 torchaudio 对不上），用 `audio-separator`：
+
+```bash
+audio-separator song.flac \
+  --model_filename htdemucs_ft.yaml \
+  --model_file_dir C:/Users/admin/audio-models \
+  --output_dir out --output_format FLAC
+```
+
+权重在 `C:\Users\admin\audio-models`（htdemucs_ft 四轨：vocals / drums / bass / other，约 377 MB）。
+同目录下 `分离-拖文件到这里.bat` 是拖拽入口。
 
 ---
 
