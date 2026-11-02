@@ -138,7 +138,24 @@ def dump_report(path, lines, row_t, **extra):
     print("\n[report]", path)
 
 
-def transcribe(audio_path, models_dir, chunk=20.0):
+def models_dir():
+    """ASR 模型目录（含 paraformer-large… 和 fsmn-vad…），由环境变量 ASR_MODELS 指定。
+
+    不写死路径：这仓库是给别人 clone 的，默认值塞一个本机路径等于谁都跑不了。
+    """
+    import os
+    p = os.environ.get("ASR_MODELS", "").strip()
+    if not p:
+        raise SystemExit(
+            "[!] 没设 ASR_MODELS。指向放了模型的目录，例如：\n"
+            "      Windows      setx ASR_MODELS D:\\models\\asr      （重开终端生效）\n"
+            "      macOS/Linux  export ASR_MODELS=~/models/asr\n"
+            "    目录下应有 paraformer-large_asr_nat-zh-cn-16k-common-vocab8404\n"
+            "    和 fsmn-vad_zh-cn-16k-common 两个文件夹。")
+    return p
+
+
+def transcribe(audio_path, models_root, chunk=20.0):
     """分块跑 Paraformer，返回 (chars, times, total_seconds)。
 
     长音频整跑会崩（CIF 累积误差），所以切块；切点挑能量最低处，别从字中间切。
@@ -148,8 +165,8 @@ def transcribe(audio_path, models_dir, chunk=20.0):
     import numpy as np
     from funasr import AutoModel
 
-    asr_dir = os.path.join(models_dir, "paraformer-large_asr_nat-zh-cn-16k-common-vocab8404")
-    vad_dir = os.path.join(models_dir, "fsmn-vad_zh-cn-16k-common")
+    asr_dir = os.path.join(models_root, "paraformer-large_asr_nat-zh-cn-16k-common-vocab8404")
+    vad_dir = os.path.join(models_root, "fsmn-vad_zh-cn-16k-common")
 
     # ffmpeg 解码成 16k 单声道，比 wave 模块短，还能吃 flac/mp3（分离出来的就是 flac）
     raw = subprocess.run(["ffmpeg", "-v", "error", "-i", audio_path,

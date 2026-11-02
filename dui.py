@@ -12,9 +12,9 @@
 """
 import os, sys, subprocess
 
-# funasr + torch 装在专门的 venv 里，系统 python 没有。
-# 所以不管用哪个 python 启动，缺依赖就自动切进 venv 重跑一遍自己——不用记路径。
-VENV_PY = os.environ.get("AUDIO_PY", r"C:\Users\admin\.venvs\audio-sep\Scripts\python.exe")
+# funasr + torch 通常装在单独的 venv 里，系统 python 没有。
+# 所以不管用哪个 python 启动，缺依赖就自动切进 AUDIO_PY 指定的解释器重跑自己。
+VENV_PY = os.environ.get("AUDIO_PY", "").strip()
 
 
 def _switch_to_venv():
@@ -25,10 +25,12 @@ def _switch_to_venv():
         return
     except ImportError:
         pass
-    if not os.path.isfile(VENV_PY):
+    if not VENV_PY or not os.path.isfile(VENV_PY):
         sys.exit(f"[!] 当前 python 没有 funasr：{sys.executable}\n"
-                 f"    也找不到 {VENV_PY}\n"
-                 f"    装一个：pip install funasr，或用 AUDIO_PY 指定解释器。")
+                 "    装一个（pip install funasr），或让脚本自己切到装好的环境：\n"
+                 "      Windows      setx AUDIO_PY D:\\venvs\\audio\\Scripts\\python.exe\n"
+                 "      macOS/Linux  export AUDIO_PY=~/venvs/audio/bin/python\n"
+                 "    另需 ASR_MODELS 指向模型目录，见 README。")
     print(f"[env] 当前 python 缺 funasr，自动切到 {VENV_PY}\n", flush=True)
     env = dict(os.environ, _DUI_IN_VENV="1")
     sys.exit(subprocess.call([VENV_PY, os.path.abspath(__file__)] + sys.argv[1:], env=env))
@@ -36,12 +38,11 @@ def _switch_to_venv():
 
 _switch_to_venv()
 
-from lrc_core import (read_lyrics, transcribe, save_asr, load_asr, align,
+from lrc_core import (models_dir, read_lyrics, transcribe, save_asr, load_asr, align,
                       anchors_from, row_times, pad_missing, enforce_min_duration, ts2lrc,
                       summarize, print_table)
 
-MODELS = os.environ.get(
-    "ASR_MODELS", r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr")
+MODELS = models_dir()
 
 
 def ask_file(prompt):

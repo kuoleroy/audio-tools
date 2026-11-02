@@ -20,15 +20,14 @@
 给了 asr.json 就把识别结果存下来——以后改歌词只需 align_lrc.py 秒级重对，不用再识别。
 """
 import sys, os
-from lrc_core import (read_lyrics, transcribe, save_asr, align, anchors_from,
+from lrc_core import (models_dir, read_lyrics, transcribe, save_asr, align, anchors_from,
                       row_times, pad_missing, enforce_min_duration, ts2lrc, summarize, dump_report, print_table)
 
 wav_path, lyric_txt, out_lrc = sys.argv[1], sys.argv[2], sys.argv[3]
 report_json = sys.argv[4] if len(sys.argv) > 4 else None
 asr_json = sys.argv[5] if len(sys.argv) > 5 else None
 
-MODELS = os.environ.get(
-    "ASR_MODELS", r"C:\Users\admin\AppData\Local\Comfy-Desktop\ComfyUI-Shared\models\asr")
+MODELS = models_dir()
 CHUNK = 20.0          # 块长；块与块不重叠
 MIN_GAP = 1.0         # 相邻两行最小间隔（秒）
 

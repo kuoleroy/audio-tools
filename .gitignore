@@ -1,13 +1,4 @@
-# ---- 音频素材与渲染产物：体积大 + 涉版权，不入库 ----
-sep/
-tmp/
-montage/
-lrc/sep/
-lrc/chk/
-lrc/t/
-lrc/fz/out/
-lrc/vocals_16k.wav
-lrc/*_16k.wav
+# ---- 音频素材与模型权重：体积大，不入库 ----
 *.wav
 *.flac
 *.mp3
@@ -15,6 +6,12 @@ lrc/*_16k.wav
 *.mp4
 *.mkv
 *.mov
+*.safetensors
+*.pth
+*.pt
+*.ckpt
+sep/
+out/
 
 # ---- Python 环境（不要用 pip --target 把包装在本目录）----
 venv/
@@ -23,27 +20,9 @@ __pycache__/
 *.py[cod]
 *.dist-info/
 *.egg-info/
+bin/
 
-# ---- 散装 pip 包，历史上误装进来的，不追踪 ----
-demucs/
-einops/
-julius/
-openunmix/
-sphn/
-tqdm/
-yaml/
-_yaml/
-*.pyd
-*.pth
-*.pt
-*.ckpt
-*.safetensors
-
-# ---- 运行日志与临时文件 ----
+# ---- 杂项 ----
 *.log
-last_t2i.json
 .DS_Store
 Thumbs.db
-
-# pip --target 留下的 console script，无包则无效
-bin/
