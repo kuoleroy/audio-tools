@@ -97,6 +97,32 @@ def pad_missing(row_t, fallback_ms=3000):
     return row_t
 
 
+def enforce_min_duration(row_t, min_ms=800):
+    """补足过短的行。原地改。
+
+    LRC 的行靠「下一行的时间」收尾——两行时间一样时，前一行就是 0 时长，
+    播放器里永远不会出现。歌词页实测会撞上这种情况（整行没锚点、后面又紧贴着下一句）。
+
+    补法是往后借：把后续行的起点整体后移，借不动（已经是最后一行）就本行自己延长。
+    借完仍然起点单调、行与行不重叠。"""
+    n = len(row_t)
+    for i in range(n):
+        rt = row_t[i]
+        if not rt or rt[1] - rt[0] >= min_ms:
+            continue
+        target = rt[0] + min_ms
+        need = target                 # 下一行最早能开始的位置
+        j = i + 1
+        while j < n and row_t[j] and row_t[j][0] < need:
+            shift = need - row_t[j][0]
+            row_t[j][0] += shift
+            row_t[j][1] += shift
+            need = row_t[j][1]
+            j += 1
+        rt[1] = target
+    return row_t
+
+
 def ts2lrc(ms):
     ms = max(0, int(ms))
     return f"{ms // 60000:02d}:{(ms % 60000) // 1000:02d}.{ms % 1000 // 10:02d}"
@@ -199,21 +225,25 @@ def load_asr(path):
     return chars, [tuple(t) for t in d["timestamp"]]
 
 
-def summarize(row_t, warn_below=0.6):
-    """按行统计对齐质量。插值行多说明这份识别不配这首歌，那几行的时间是猜的。
-    注意 0/0 的行（整行没有锚点）不算「对上」——rt[3] 是 0 时 0==0 会误判。"""
-    n = sum(1 for rt in row_t if rt)
-    exact = sum(1 for rt in row_t if rt and rt[3] and rt[2] == rt[3])
-    guess = sum(1 for rt in row_t if rt and not rt[2])
-    part = n - exact - guess
-    print(f"[quality] 整行对上 {exact} / 部分对上 {part} / 全靠插值 {guess}"
-          f"（共 {n} 行，{exact / max(1, n) * 100:.0f}% 可靠）")
-    if n and exact / n < warn_below:
-        print(f"[warn] 可靠行不足 {warn_below:.0%}。按这两步查：\n"
+def summarize(row_t, good_ratio=0.8, warn_imputed=0.3):
+    """按「这一行有多少字挂上了时间」分三档。
+
+    别用「一行里一个字都不差」当及格线：11 个字对上 10 个，时间完全可用，
+    按严口径会算成不可靠，报出来的数字低到吓人（实测 80% 锚点覆盖率 → 只有 23% 行全同）。"""
+    rows = [rt for rt in row_t if rt]
+    n = len(rows)
+    solid = sum(1 for rt in rows if rt[3] and rt[2] / rt[3] >= good_ratio)
+    imputed = sum(1 for rt in rows if not rt[2])
+    weak = n - solid - imputed
+    print(f"[quality] 稳 {solid} / 偏 {weak} / 插值 {imputed}（共 {n} 行）")
+    print(f"          稳 = 该行 ≥{good_ratio:.0%} 的字挂上了时间，能直接用；"
+          f"偏 = 有锚点但不够，时间可能差半句；插值 = 一个字没锚上，时间是我猜的")
+    if n and imputed / n > warn_imputed:
+        print(f"[warn] {imputed}/{n} 行全靠插值。按这两步查：\n"
               "  1) 输入必须是**分离后的 vocals**，混音直接识别会被伴奏带偏；\n"
               "  2) 已经是 vocals 还低，就是模型对唱腔不适应（唱歌比说话难识别），\n"
               "     换更强的声学模型（SenseVoice / Whisper）重跑识别，或手工校正插值行。")
-    return exact, part, guess
+    return solid, weak, imputed
 
 
 def print_table(lines, row_t):
@@ -222,6 +252,7 @@ def print_table(lines, row_t):
         if rt is None:
             print(f"  {i:3d}  —— 无锚点 ——                {ln}")
             continue
-        flag = "  " if rt[2] == rt[3] else ("~ " if rt[2] else "插")
+        flag = ("插" if not rt[2]
+                else ("  " if rt[3] and rt[2] / rt[3] >= 0.8 else "~ "))
         print(f"{flag}{i:3d} {ts2lrc(rt[0]):>8} {ts2lrc(rt[1]):>8}  "
               f"{rt[2]:>4}/{rt[3]:<4}  {ln}")

@@ -4,7 +4,7 @@
 只钉住真正会错的地方：编辑距离对不对得上、错字能不能挂上时间、连续缺锚点会不会塌。
 """
 from lrc_core import (align, anchors_from, row_times, pad_missing, ts2lrc,
-                      summarize, read_lyrics)
+                      summarize, read_lyrics, enforce_min_duration)
 
 
 def test_align_basic():
@@ -54,6 +54,27 @@ def test_ts2lrc():
 def test_summarize_counts_zero_total_as_guess():
     # 0/0 行是整行没锚点，不能因为 0==0 被算成「整行对上」
     row_t = [[0, 100, 3, 3], [0, 100, 1, 3], [0, 100, 0, 0]]
+    assert summarize(row_t) == (1, 1, 1)
+
+
+def test_min_duration_pushes_next():
+    # 零时长行在 LRC 里等于不显示：往后借时间，且借完仍然不重叠
+    row_t = [[0, 1000, 1, 1], [1000, 1000, 1, 1], [1000, 3000, 1, 1]]
+    enforce_min_duration(row_t, 800)
+    assert row_t[1][1] - row_t[1][0] >= 800, row_t
+    assert row_t[0][1] <= row_t[1][0], row_t
+    assert row_t[1][1] <= row_t[2][0], row_t
+
+
+def test_min_duration_last_row():
+    row_t = [[5000, 5000, 1, 1]]
+    enforce_min_duration(row_t, 800)
+    assert row_t[0][:2] == [5000, 5800], row_t
+
+
+def test_summarize_ratio_threshold():
+    # 11 个字对上 10 个：时间完全可用，不能算成不可靠
+    row_t = [[0, 100, 10, 11], [0, 100, 4, 11], [0, 100, 0, 0]]
     assert summarize(row_t) == (1, 1, 1)
 
 

@@ -13,7 +13,7 @@
 用法: python align_lrc.py <asr.json> <lyrics.txt> <out.lrc> [report.json]
 """
 import sys, json
-from lrc_core import (read_lyrics, align, anchors_from, row_times, pad_missing,
+from lrc_core import (read_lyrics, align, anchors_from, row_times, pad_missing, enforce_min_duration,
                       ts2lrc, summarize, dump_report, print_table)
 
 asr_json, lyric_txt, out_lrc = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -47,7 +47,7 @@ print(f"[align] 对子 {len(pairs)}（其中完全相同 {sum(1 for r, h in pair
 anchors = anchors_from(ref, hyp, htimes, pairs)
 print(f"[align] 锚点 {len(anchors)} / {len(ref)} 字 ({len(anchors) / max(1, len(ref)) * 100:.1f}%)")
 
-row_t = pad_missing(row_times(spans, anchors))
+row_t = enforce_min_duration(pad_missing(row_times(spans, anchors)))
 
 out = [f"[{ts2lrc(rt[0])}]{ln}" for ln, rt in zip(lines, row_t) if rt]
 open(out_lrc, "w", encoding="utf-8").write("\n".join(out) + "\n")

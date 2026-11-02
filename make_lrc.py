@@ -21,7 +21,7 @@
 """
 import sys, os
 from lrc_core import (read_lyrics, transcribe, save_asr, align, anchors_from,
-                      row_times, pad_missing, ts2lrc, summarize, dump_report, print_table)
+                      row_times, pad_missing, enforce_min_duration, ts2lrc, summarize, dump_report, print_table)
 
 wav_path, lyric_txt, out_lrc = sys.argv[1], sys.argv[2], sys.argv[3]
 report_json = sys.argv[4] if len(sys.argv) > 4 else None
@@ -47,7 +47,7 @@ print(f"[align] 对子 {len(pairs)}（全同 {sum(1 for r, h in pairs if ref[r] 
 anchors = anchors_from(ref, hyp, htimes, pairs)
 print(f"[align] 锚点 {len(anchors)}/{len(ref)} ({len(anchors) / max(1, len(ref)) * 100:.1f}%)")
 
-row_t = pad_missing(row_times(spans, anchors))
+row_t = enforce_min_duration(pad_missing(row_times(spans, anchors)))
 
 # ---------- 强制单调 + 最小间隔 ----------
 starts = [rt[0] / 1000.0 if rt else 0.0 for rt in row_t]

@@ -10,9 +10,34 @@
     python dui.py                # 全问答
     python dui.py 歌.wav         # 音频先给，只问歌词
 """
-import os, sys
+import os, sys, subprocess
+
+# funasr + torch 装在专门的 venv 里，系统 python 没有。
+# 所以不管用哪个 python 启动，缺依赖就自动切进 venv 重跑一遍自己——不用记路径。
+VENV_PY = os.environ.get("AUDIO_PY", r"C:\Users\admin\.venvs\audio-sep\Scripts\python.exe")
+
+
+def _switch_to_venv():
+    if os.environ.get("_DUI_IN_VENV") == "1":      # 已经切过了，别再套娃
+        return
+    try:
+        import funasr  # noqa: F401
+        return
+    except ImportError:
+        pass
+    if not os.path.isfile(VENV_PY):
+        sys.exit(f"[!] 当前 python 没有 funasr：{sys.executable}\n"
+                 f"    也找不到 {VENV_PY}\n"
+                 f"    装一个：pip install funasr，或用 AUDIO_PY 指定解释器。")
+    print(f"[env] 当前 python 缺 funasr，自动切到 {VENV_PY}\n", flush=True)
+    env = dict(os.environ, _DUI_IN_VENV="1")
+    sys.exit(subprocess.call([VENV_PY, os.path.abspath(__file__)] + sys.argv[1:], env=env))
+
+
+_switch_to_venv()
+
 from lrc_core import (read_lyrics, transcribe, save_asr, load_asr, align,
-                      anchors_from, row_times, pad_missing, ts2lrc,
+                      anchors_from, row_times, pad_missing, enforce_min_duration, ts2lrc,
                       summarize, print_table)
 
 MODELS = os.environ.get(
@@ -69,7 +94,7 @@ def main():
     anchors = anchors_from(ref, hyp, htimes, pairs)
     print(f"[align] 锚点 {len(anchors)}/{len(ref)} ({len(anchors) / max(1, len(ref)) * 100:.1f}%)")
 
-    row_t = pad_missing(row_times(spans, anchors))
+    row_t = enforce_min_duration(pad_missing(row_times(spans, anchors)))
     out_lrc = stem + ".lrc"
     open(out_lrc, "w", encoding="utf-8").write(
         "\n".join(f"[{ts2lrc(rt[0])}]{ln}" for ln, rt in zip(lines, row_t) if rt) + "\n")
